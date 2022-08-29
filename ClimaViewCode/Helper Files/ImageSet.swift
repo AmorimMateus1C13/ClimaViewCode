@@ -12,7 +12,7 @@ struct ImageSet {
     static let location = "location.magnifyingglass"
     static let sunRise = "sunrise.fill"
     static let sunSet = "sunset.fill"
-    
+
     static let humidity = "humidity.fill"
     static let thermometer = "thermometer"
     static let thermoterSnow = "thermometer.snowflake"

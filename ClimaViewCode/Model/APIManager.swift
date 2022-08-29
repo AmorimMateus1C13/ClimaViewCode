@@ -11,7 +11,6 @@ import CoreLocation
 protocol ClimaDelegate {
     func didUpdateClima(requistor: APIManager, conditions: ClimaModel)
     func didFailWithError(error: Error)
-    
 }
 
 struct APIManager {
@@ -23,8 +22,9 @@ struct APIManager {
     var delegate: ClimaDelegate?
     
     func fetchCity(city: String) {
-        let urlCity = "\(url+apiKey+units+language)&q=\(city)"
-//        print(urlCity)
+        var cityTrimSpaces =  city.replacingOccurrences(of: " ", with: "%20")
+        cityTrimSpaces = cityTrimSpaces.applyingTransform(.stripDiacritics, reverse: false)!
+        let urlCity = "\(url+apiKey+units+language)&q=\(cityTrimSpaces)"
         performRequest(with: urlCity)
     }
     
@@ -32,7 +32,6 @@ struct APIManager {
        let urlString = "\(url)\(apiKey)\(units)\(language)&lat=\(latitude)&lon=\(longitude)"
         performRequest(with: urlString)
     }
-    
     
     func performRequest(with urlString: String) {
         if let url = URL(string: urlString) {
@@ -45,8 +44,11 @@ struct APIManager {
                 }
                 if let safeData = data {
                     if let clima = self.parsonJSON(clima: safeData){
-                        ClimaController().setupModel(model: clima)
-                        self.delegate?.didUpdateClima(requistor: self, conditions: clima)
+                        DispatchQueue.main.async {
+                            
+                            ClimaController().setupModel(model: clima)
+                            self.delegate?.didUpdateClima(requistor: self, conditions: clima)
+                        }
                     }
                 }
             }
@@ -55,24 +57,22 @@ struct APIManager {
     }
     
     func parsonJSON(clima: Data) -> ClimaModel? {
+        
         let decoder = JSONDecoder()
         do {
             let decodedData = try decoder.decode(ClimaData.self, from: clima)
-            
+            let country = decodedData.sys.country
             let id = decodedData.weather[0].id
-            print(id)
             let temp = decodedData.main.temp
             let name = decodedData.name
             let descricao = decodedData.weather[0].description
             let cloud = decodedData.clouds.all
-            
             let date = decodedData.dt
             let sunRise = decodedData.sys.sunrise
             let sunDown = decodedData.sys.sunset
             let min = decodedData.main.temp_min
             let max = decodedData.main.temp_max
             let hum = decodedData.main.humidity
-            print(sunDown.formatted(date: .omitted, time: .shortened))
             let climaWether = ClimaModel(
                 conditionId: id,
                 cityName: name,
@@ -84,15 +84,14 @@ struct APIManager {
                 sunDown: sunDown,
                 temp_min: min,
                 temp_max: max,
-                humidity: hum
+                humidity: hum,
+                country: country
             )
             return climaWether
             
         }catch {
             delegate?.didFailWithError(error: error)
-            print("Erro de escrita na chamada do ParseJSON. Erro: \(error)")
             return nil
         }
     }
-    
 }

@@ -8,6 +8,9 @@
 import Foundation
 import UIKit
 class TableViewDataSource: NSObject, UITableViewDelegate, UITableViewDataSource {
+    
+    var climaModel: ClimaModel?
+    
     let tableView: UITableView
     
     init(tableview: UITableView) {
@@ -17,9 +20,16 @@ class TableViewDataSource: NSObject, UITableViewDelegate, UITableViewDataSource 
         tableview.dataSource = self
         tableview.delegate = self
         tableview.isUserInteractionEnabled = false
+        tableview.separatorStyle = .none
     }
     
     func reload() {
+        tableView.reloadData()
+    }
+    
+    
+    func updateCells(_ data: ClimaModel) {
+        self.climaModel = data
         tableView.reloadData()
     }
     
@@ -34,7 +44,8 @@ class TableViewDataSource: NSObject, UITableViewDelegate, UITableViewDataSource 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: CellView.identifier(), for: indexPath) as? CellView else{ return UITableViewCell()}
         
-            return cell
+        cell.setupData(model: climaModel)
+        return cell
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

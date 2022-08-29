@@ -19,7 +19,7 @@ class SearchConfiguration: UITextField {
     
     func configuration() {
         backgroundColor = .white
-        font = UIFont.systemFont(ofSize: 30)
+        font = UIFont.systemFont(ofSize: 21)
         textAlignment = .center
         textColor = .black
         borderStyle = .roundedRect

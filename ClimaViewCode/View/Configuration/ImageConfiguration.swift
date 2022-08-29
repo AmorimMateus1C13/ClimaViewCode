@@ -20,9 +20,9 @@ class ImageConfiguration: UIImageView {
         
     func setImage(_ sender: UIImageView, image: String, style: Bool? = false, size: CGFloat? = nil, color: UIColor? = nil) {
         
-      
         var config = UIImage.SymbolConfiguration(hierarchicalColor: .white)
-
+        config = changeMainImage(image, config: config)
+        
         if let userSize = size {
            config = config.applying(UIImage.SymbolConfiguration(pointSize: userSize))
         }
@@ -42,6 +42,23 @@ class ImageConfiguration: UIImageView {
             sender.image = newImage
             sender.contentMode = .scaleAspectFit
         }
-
+    }
+    
+    func changeMainImage(_ image: String, config: UIImage.SymbolConfiguration) -> UIImage.SymbolConfiguration {
+        switch image {
+            
+        case clima.Cloud.cloudSunBolt, clima.Cloud.cloudRainFill, clima.Cloud.cloudRainFill:
+            return config.applying(UIImage.SymbolConfiguration(hierarchicalColor: Colors.cloudRain))
+        case clima.Sun.sunMaxFill:
+            return config.applying(UIImage.SymbolConfiguration(hierarchicalColor: Colors.hot))
+        case clima.Sun.sunMax:
+            return config.applying(UIImage.SymbolConfiguration(hierarchicalColor: .yellow))
+        case clima.Snow.snowFlake, clima.Snow.snowFlakeCircle:
+            return config.applying(UIImage.SymbolConfiguration(hierarchicalColor: Colors.cold))
+        case  clima.Snow.snowFlakeCircle:
+            return config.applying(UIImage.SymbolConfiguration(hierarchicalColor: Colors.cold))
+        default:
+           return config.applying(UIImage.SymbolConfiguration(hierarchicalColor: .white))
+        }
     }
 }

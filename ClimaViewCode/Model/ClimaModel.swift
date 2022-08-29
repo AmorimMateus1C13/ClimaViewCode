@@ -18,6 +18,7 @@ struct ClimaModel{
     let temp_min: Double
     let temp_max: Double
     let humidity: Int
+    let country: String
     
     var temperatureString: String {
         return String(format: "%.1f", temperature)

@@ -9,6 +9,7 @@ import Foundation
 import UIKit
 
 class CellView: UITableViewCell {
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupConfiguration()
@@ -42,71 +43,75 @@ class CellView: UITableViewCell {
     var dateStack: UIStackView = {
         let stack = StackViewConfiguration()
         stack.verticalCentralized()
-        
-        var dayLabel = LabelConfiguration()
-        dayLabel.centralized()
-        dayLabel.text = "31/DEZ"
-        
-        var hourLabel = LabelConfiguration()
-        hourLabel.centralized()
-        hourLabel.text = "12:00"
-        
-        stack.addArrangedSubview(dayLabel)
-        stack.addArrangedSubview(hourLabel)
-        
         return stack
+    }()
+    
+    var dayLabel: UILabel = {
+        let day = LabelConfiguration()
+        day.centralized()
+    return day
+    }()
+    
+    var hourLabel: UILabel = {
+        let hourLabel = LabelConfiguration()
+        hourLabel.centralized()
+    return hourLabel
     }()
     
     var humidityStack: UIStackView = {
         let stack = StackViewConfiguration()
         stack.verticalCentralized()
-        
-        var humidityImage = ImageConfiguration(frame: .zero)
-        humidityImage.setImage(humidityImage, image: ImageSet.humidity,size: 30)
-        
-        var percentage = LabelConfiguration()
-        percentage.centralized()
-        percentage.text = "100%"
-        
-        stack.addArrangedSubview(humidityImage)
-        stack.addArrangedSubview(percentage)
-        
         return stack
+    }()
+    
+    var humidityImage: UIImageView = {
+        let image = ImageConfiguration(frame: .zero)
+        image.setImage(image, image: ImageSet.humidity,size: 30, color: Colors.humidy)
+        return image
+    }()
+    
+    var percentage: UILabel = {
+        let percentage = LabelConfiguration()
+        percentage.centralized()
+        return percentage
     }()
     
     var maxStack: UIStackView = {
         let stack = StackViewConfiguration()
         stack.verticalCentralized()
-        
-        var maxImage = ImageConfiguration(frame: .zero)
-        maxImage.setImage(maxImage, image: ImageSet.thermometer,size: 30)
-        
-        var maxTemp = LabelConfiguration()
-        maxTemp.centralized()
-        maxTemp.text = "0º"
-        
-        stack.addArrangedSubview(maxImage)
-        stack.addArrangedSubview(maxTemp)
-        
         return stack
+    }()
+    
+    var maxImage: UIImageView = {
+        let maxImage = ImageConfiguration(frame: .zero)
+        maxImage.setImage(maxImage, image: ImageSet.thermometer,size: 30,color: Colors.hot)
+        return maxImage
+    }()
+    
+    var maxTemp: UILabel = {
+        let maxTemp = LabelConfiguration()
+        maxTemp.centralized()
+        return maxTemp
     }()
     
     var minStack: UIStackView = {
         let stack = StackViewConfiguration()
         stack.verticalCentralized()
-        
-        var minImage = ImageConfiguration(frame: .zero)
-        minImage.setImage(minImage, image: ImageSet.thermoterSnow,size: 30)
-        
-        var minTemp = LabelConfiguration()
-        minTemp.centralized()
-        minTemp.text = "100º"
-        
-        stack.addArrangedSubview(minImage)
-        stack.addArrangedSubview(minTemp)
-        
         return stack
     }()
+    
+    var minImage: UIImageView = {
+        let minImage = ImageConfiguration(frame: .zero)
+        minImage.setImage(minImage, image: ImageSet.thermoterSnow,size: 30,color: Colors.cold)
+        return minImage
+    }()
+
+    var minTemp: UILabel = {
+        let minTemp = LabelConfiguration()
+        minTemp.centralized()
+        return minTemp
+    }()
+
     
     // MARK: - View
     
@@ -122,7 +127,6 @@ class CellView: UITableViewCell {
         return stack
     }()
     
-    
     var sunVerticalStack: UIStackView = {
         let stack = StackViewConfiguration()
         stack.verticalCentralized()
@@ -131,25 +135,21 @@ class CellView: UITableViewCell {
     
     var sunlabel: UILabel = {
         let sun = LabelConfiguration()
-        sun.text = "sun"
-        sun.centralized()
+        sun.description()
         return sun
     }()
     
-    var hour: UILabel = {
+    var hourRise: UILabel = {
         let hour = LabelConfiguration()
-        hour.text = "hour"
         hour.centralized()
         return hour
     }()
     
-    var sunImage: UIImageView = {
+    let sunImage: UIImageView = {
         let sun = ImageConfiguration(frame: .zero)
         sun.setImage(sun, image: ImageSet.sunRise, size: 60, color: .yellow)
         return sun
     }()
-
-    
     
     var setVerticalStack: UIStackView = {
         let stack = StackViewConfiguration()
@@ -159,43 +159,76 @@ class CellView: UITableViewCell {
     
     var setLabel: UILabel = {
         let set = LabelConfiguration()
-        set.text = "SunSet"
-        set.centralized()
+        set.description()
         return set
     }()
     
     var hourSet: UILabel = {
         let hour = LabelConfiguration()
-        hour.text = "hour"
         hour.centralized()
         return hour
     }()
     
-    var downImage: UIImageView = {
+    let downImage: UIImageView = {
         let down = ImageConfiguration(frame: .zero)
-        down.setImage(down, image: ImageSet.sunSet, size: 60, color: .orange)
+        down.setImage(down, image: ImageSet.sunSet, size: 60, color: Colors.sunSet)
         return down
     }()
     
+    func setupData(model: ClimaModel?){
+        guard let info = model else {
+            return
+        }
 
-    
+        dayLabel.text = "\(info.date.formatted(date: .numeric, time: .omitted).dropLast(5))"
+        hourLabel.text = info.date.formatted(date: .omitted, time: .shortened)
+        percentage.text = "\(info.humidity)%"
+        
+        switch info.country {
+        case "VN", "TH", "PG", "NZ", "MY", "LA", "JP", "ID", "HK", "TW", "PH", "FJ", "KR", "CN", "AU":
+            hourRise.text = "\(info.sunDown.formatted(date: .omitted, time: .shortened))"
+            hourSet.text = "\(info.sunRise.formatted(date: .omitted, time: .shortened))"
+        
+        default:
+            hourRise.text = "\(info.sunRise.formatted(date: .omitted, time: .shortened))"
+            hourSet.text = "\(info.sunDown.formatted(date: .omitted, time: .shortened))"
+        }
+        maxTemp.text = String(format: "%.1fº", info.temp_max)
+        minTemp.text = String(format: "%.1fº", info.temp_min)
+        
+        sunlabel.text =  clima.titles.sunrisen
+       
+        setLabel.text = clima.titles.sunSet
+    }
 }
 
 extension CellView: ViewConfiguration {
     func buildViewHierachy() {
         addSubview(infoView)
+        
         infoView.addSubview(stackViewHorizontal)
         stackViewHorizontal.addArrangedSubview(dateStack)
+        dateStack.addArrangedSubview(dayLabel)
+        dateStack.addArrangedSubview(hourLabel)
+        
         stackViewHorizontal.addArrangedSubview(humidityStack)
+        humidityStack.addArrangedSubview(humidityImage)
+        humidityStack.addArrangedSubview(percentage)
+        
         stackViewHorizontal.addArrangedSubview(maxStack)
+        maxStack.addArrangedSubview(maxImage)
+        maxStack.addArrangedSubview(maxTemp)
+        
         stackViewHorizontal.addArrangedSubview(minStack)
+        minStack.addArrangedSubview(minImage)
+        minStack.addArrangedSubview(minTemp)
         
         addSubview(climaView)
         climaView.addSubview(climaHorizontalStack)
         
         climaHorizontalStack.addArrangedSubview(sunVerticalStack)
         sunVerticalStack.addArrangedSubview(sunlabel)
-        sunVerticalStack.addArrangedSubview(hour)
+        sunVerticalStack.addArrangedSubview(hourRise)
         sunVerticalStack.addArrangedSubview(sunImage)
         
         climaHorizontalStack.addArrangedSubview(setVerticalStack)
@@ -203,7 +236,6 @@ extension CellView: ViewConfiguration {
         setVerticalStack.addArrangedSubview(setLabel)
         setVerticalStack.addArrangedSubview(hourSet)
         setVerticalStack.addArrangedSubview(downImage)
-        
     }
     
     func setupConstrants() {

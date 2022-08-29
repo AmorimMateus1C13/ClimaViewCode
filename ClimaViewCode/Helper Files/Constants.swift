@@ -7,13 +7,12 @@
 
 import Foundation
 
-struct Constants {
-    struct cell {
-        static let cellIdentifier = "Reusable"
-    }
-}
-
 struct clima {
+    
+    struct titles {
+        static let sunrisen = "Nascer do Sol"
+        static let sunSet = "Pôr-do-Sol"
+    }
     struct Sun{
         static let sunMin = "sun.min"
         static let sunMinFill = "sun.min.fill"
@@ -98,6 +97,5 @@ struct clima {
         static let humidity = "humidity"
         static let humidityFill = "humidity.fill"
         static let thermometherLow = "thermometer.low"
-        
     }
 }

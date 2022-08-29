@@ -24,17 +24,8 @@ class ButtonsConfigurations: UIButton {
         if let image = UIImage(systemName: ImageSet.home, withConfiguration: config){
             sender.setImage(image, for: .normal)
             sender.contentMode = .scaleAspectFill
-
         }
     }
-    
-//    func homeButton() {
-//        print("Go to home")
-//    }
-//    
-//    func locationButton() {
-//        print("Get location")
-//    }
     
     func locationSetImage(_ sender: UIButton) {
         var config = UIImage.SymbolConfiguration(hierarchicalColor: .white)

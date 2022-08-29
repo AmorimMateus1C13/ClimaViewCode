@@ -8,20 +8,26 @@
 import UIKit
 import SnapKit
 
+protocol LoadingScreen {
+    func loadIconAppear()
+    func loadIconDisappear()
+}
+
 protocol CatchLocation{
     func getCurrentLocation()
     func getCityLocation()
 }
 
-
 class ClimaView: UIView {
+    
+    var loadingDelegate: LoadingScreen?
     var delegate: CatchLocation?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        backgroundColor = Colors.background
         setupConfiguration()
         tableViewDataSource.reload()
+        infoLabel.isHidden = true
     }
     
     required init?(coder: NSCoder) {
@@ -37,6 +43,7 @@ class ClimaView: UIView {
     
     @objc func homebuttonPressed() {
         delegate?.getCurrentLocation()
+        loadingDelegate?.loadIconAppear()
     }
     
      var locationButton: UIButton = {
@@ -48,6 +55,7 @@ class ClimaView: UIView {
     
     @objc func locationButtonPressed() {
         delegate?.getCityLocation()
+        loadingDelegate?.loadIconAppear()
     }
     
      var searchTextField: UITextField = {
@@ -56,29 +64,32 @@ class ClimaView: UIView {
         return search
     }()
     
-     var temperatureLabel: UILabel = {
+    lazy var infoLabel: UILabel = {
+        let label = LabelConfiguration()
+        label.errorLabel()
+        return label
+    }()
+    
+     lazy var temperatureLabel: UILabel = {
          let temp = LabelConfiguration()
-         temp.centralized()
-         temp.text = "19º"
+         temp.temperature()
         return temp
     }()
     
-    var cityLabel: UILabel = {
+    lazy var cityLabel: UILabel = {
         let city = LabelConfiguration()
         city.centralized()
-        city.text = "Brasil"
         return city
     }()
     
-     var climaLabel: UILabel = {
+     lazy var climaLabel: UILabel = {
         let label = LabelConfiguration()
-         label.centralized()
-         label.text = "Nublado"
+         label.description()
         return label
     }()
     
     
-    var cloudImage: UIImageView = {
+    let cloudImage: ImageConfiguration = {
         let cloud = ImageConfiguration(frame: .zero)
         cloud.setImage(cloud, image: ImageSet.cloud, style: true)
         return cloud
@@ -103,7 +114,6 @@ class ClimaView: UIView {
         stack.verticalConfiguration()
         return stack
     }()
-    
 }
 
 extension ClimaView: ViewConfiguration {
@@ -113,6 +123,7 @@ extension ClimaView: ViewConfiguration {
         stackViewHorizontal.addArrangedSubview(searchTextField)
         stackViewHorizontal.addArrangedSubview(locationButton)
         
+        addSubview(infoLabel)
         addSubview(stackViewVertical)
         stackViewVertical.addArrangedSubview(temperatureLabel)
         stackViewVertical.addArrangedSubview(cityLabel)
@@ -121,8 +132,6 @@ extension ClimaView: ViewConfiguration {
         addSubview(cloudImage)
         
         addSubview(tableView)
-        
-        
     }
     
     func setupConstrants() {
@@ -139,17 +148,25 @@ extension ClimaView: ViewConfiguration {
             make.centerY.centerX.equalToSuperview()
         }
         
+        infoLabel.snp.makeConstraints { make in
+            make.top.equalTo(stackViewHorizontal.snp.bottom).offset(8)
+            make.trailing.leading.equalToSuperview().inset(24)
+            make.height.equalTo(25)
+        }
+        
         stackViewVertical.snp.makeConstraints { make in
-            make.height.width.equalTo(150)
+            make.height.equalTo(150)
             make.leading.equalToSuperview().inset(16)
             make.top.equalTo(stackViewHorizontal.snp.bottom).offset(50)
         }
+        
         temperatureLabel.snp.makeConstraints { make in
             make.height.equalTo(75)
         }
         
         cityLabel.snp.makeConstraints { make in
             make.height.equalTo(35)
+            make.width.equalTo(200)
         }
         
         cloudImage.snp.makeConstraints { make in
@@ -165,5 +182,3 @@ extension ClimaView: ViewConfiguration {
         }
     }
 }
-
-

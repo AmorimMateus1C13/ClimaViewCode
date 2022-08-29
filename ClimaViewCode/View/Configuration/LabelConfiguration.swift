@@ -17,9 +17,32 @@ class LabelConfiguration: UILabel {
         fatalError("init(coder:) has not been implemented")
     }
     
+    func temperature() {
+        textAlignment = .center
+        font = UIFont.systemFont(ofSize: 30)
+        textColor = .white
+    }
+    
     func centralized() {
         textAlignment = .center
         font = UIFont.systemFont(ofSize: 21)
-        textColor = .black
+        textColor = .white
+        numberOfLines = 0
+    }
+    
+    func description() {
+        textAlignment = .center
+        font = UIFont.systemFont(ofSize: 14)
+        textColor = .white
+        numberOfLines = 0
+    }
+    
+    func errorLabel() {
+        textAlignment = .center
+        font = UIFont.systemFont(ofSize: 15)
+        textColor = .red
+        numberOfLines = 1
+        text = "Cidade não encontrada! Verifique a digitação."
+        backgroundColor = .systemFill
     }
 }
